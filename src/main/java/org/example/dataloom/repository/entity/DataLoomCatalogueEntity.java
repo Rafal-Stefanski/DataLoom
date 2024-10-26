@@ -22,7 +22,7 @@ public class DataLoomCatalogueEntity {
     private String id;
 
     // Fields from FruitHarvestEventPayloadDto
-    private String eventId;
+//    private String eventId;
     private List<String> batchId;
     private String farmLocation;
     private FruitType fruitType;
@@ -43,7 +43,7 @@ public class DataLoomCatalogueEntity {
     public DataLoomCatalogueEntity withFruitTypeAndQuality(FruitType fruitType, QualityGrade quality) {
         return new DataLoomCatalogueEntity(
                 id,
-                eventId,
+//                eventId,
                 batchId,
                 farmLocation,
                 fruitType,

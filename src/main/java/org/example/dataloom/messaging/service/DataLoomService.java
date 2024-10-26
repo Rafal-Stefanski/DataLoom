@@ -7,11 +7,12 @@ import org.example.dataloom.messaging.dto.QualityGrade;
 import org.example.dataloom.repository.ArchivedFruitHarvestEventsRepository;
 import org.example.dataloom.repository.ArchivedQualityControlEventsRepository;
 import org.example.dataloom.repository.DataLoomRepository;
-import org.example.dataloom.repository.entity.QualityControlEntity;
 import org.example.dataloom.repository.entity.DataLoomCatalogueEntity;
 import org.example.dataloom.repository.entity.FruitHarvestEventEntity;
+import org.example.dataloom.repository.entity.QualityControlEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -45,16 +46,31 @@ public class DataLoomService {
             if (dataLoomCatalogueEntity.isPresent()) {
                 updateFruitHarvestEventToDataLoomCollection(fruitHarvestEvent, qualityControlEntity.get(), dataLoomCatalogueEntity.get());
             } else {
-                createNewDocument(fruitHarvestEvent, qualityControlEntity.get());
+                var newDataLoomCatalogueEntity = createNewDocument(fruitHarvestEvent, qualityControlEntity.get());
+                dataLoomRepository.save(newDataLoomCatalogueEntity);
             }
-            // if not create a new document.
         } else {
             log.warn("Quality check does not exist for batchId: {}, batch saved to archived collection", fruitHarvestEvent.getBatchId());
             archivedFruitHarvestEventsRepository.save(fruitHarvestEvent);
         }
     }
 
-    private void createNewDocument(FruitHarvestEventEntity fruitHarvestEvent, QualityControlEntity QualityControlEntity) {
+    private DataLoomCatalogueEntity createNewDocument(FruitHarvestEventEntity fruitHarvestEvent, QualityControlEntity qualityControlEntity) {
+        // create a new document with the information
+        log.info("Creating new document in DataLoomCatalogue for: {}, {}", fruitHarvestEvent.getFruitType(), qualityControlEntity.getQuality());
+        return DataLoomCatalogueEntity.builder()
+                .batchId(List.of(fruitHarvestEvent.getBatchId()))
+                .farmLocation(fruitHarvestEvent.getFarmLocation())
+                .fruitType(fruitHarvestEvent.getFruitType())
+                .harvestDate(fruitHarvestEvent.getHarvestDate())
+                .location(List.of())
+                .availableKg(fruitHarvestEvent.getQuantityKg())
+                .status("unknown")
+                .quality(qualityControlEntity.getQuality())
+                .inspectorId(qualityControlEntity.getInspectorId())
+                .inspectionDate(qualityControlEntity.getInspectionDate())
+                .remarks(qualityControlEntity.getRemarks())
+                .build();
     }
 
     private void updateFruitHarvestEventToDataLoomCollection(FruitHarvestEventEntity fruitHarvestEvent,
