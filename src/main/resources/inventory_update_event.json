@@ -1,0 +1,7 @@
+{
+  "fruitType": "Apple",
+  "batchId": "HARV-APPLE-001",
+  "location": "Warehouse A",
+  "availableKg": 450,
+  "status": "Stored"
+}
