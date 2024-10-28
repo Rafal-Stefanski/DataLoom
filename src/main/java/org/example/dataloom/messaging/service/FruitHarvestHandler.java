@@ -1,5 +1,6 @@
 package org.example.dataloom.messaging.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dataloom.messaging.dto.FruitHarvestEventPayloadDto;
@@ -8,7 +9,7 @@ import org.example.dataloom.repository.ArchivedFruitHarvestEventsRepository;
 import org.example.dataloom.repository.ArchivedQualityControlEventsRepository;
 import org.example.dataloom.repository.entity.QualityControlEntity;
 import org.example.dataloom.repository.entity.FruitHarvestEventEntity;
-import org.example.dataloom.repository.mapper.Mapper;
+import org.example.dataloom.repository.mapper.FruitHarvestMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -23,11 +24,12 @@ public class FruitHarvestHandler {
     private final ArchivedFruitHarvestEventsRepository archivedFruitHarvestRepository;
     private final ArchivedQualityControlEventsRepository archivedQualityControlRepository;
 
-    private final Mapper mapperImpl;
+    private final FruitHarvestMapper fruitHarvestMapperImpl;
 
     public void handle(FruitHarvestEventPayloadDto fruitHarvestEventPayloadDto) {
         // get harvest event
-        FruitHarvestEventEntity entity = mapperImpl.toEntity(fruitHarvestEventPayloadDto);
+        FruitHarvestEventEntity entity = fruitHarvestMapperImpl.toEntity(fruitHarvestEventPayloadDto);
+        ObjectMapper objectMapper = new ObjectMapper();
         // check for quality control event
         Optional<QualityControlEntity> qualityControlByBatchId = archivedQualityControlRepository.findFirstByBatchId(entity.getBatchId());
         qualityControlByBatchId

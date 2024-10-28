@@ -2,11 +2,12 @@ package org.example.dataloom.repository.mapper;
 
 import org.example.dataloom.messaging.dto.FruitHarvestEventPayloadDto;
 import org.example.dataloom.repository.entity.FruitHarvestEventEntity;
+import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@org.mapstruct.Mapper(componentModel = "spring")
-public interface Mapper {
+@Mapper(componentModel = "spring")
+public interface FruitHarvestMapper {
 
-//    @Mapping(target = "id", ignore = true)    // check if this is needed: causes build problem "shuld be null"
+    @Mapping(target = "id", ignore = true)
     FruitHarvestEventEntity toEntity(FruitHarvestEventPayloadDto dto);
 }
