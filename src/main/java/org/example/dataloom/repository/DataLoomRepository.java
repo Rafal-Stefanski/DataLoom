@@ -10,5 +10,12 @@ import java.util.Optional;
 
 @Repository
 public interface DataLoomRepository extends MongoRepository<DataLoomCatalogueEntity, String> {
-    Optional<DataLoomCatalogueEntity> findDataLoomCatalogueEntityByFruitTypeAndQualityGrade(FruitType fruitType, QualityGrade qualityGrade);
+
+    default Optional<DataLoomCatalogueEntity> findDataLoomCatalogueEntityByFruitTypeAndQualityGrade(
+            FruitType fruitType, QualityGrade qualityGrade) {
+        return findAll().stream()
+                .filter(dataLoomCatalogueEntity -> dataLoomCatalogueEntity.getFruitType().equals(fruitType) &&
+                        dataLoomCatalogueEntity.getQuality().equals(qualityGrade))
+                .findFirst();
+    }
 }

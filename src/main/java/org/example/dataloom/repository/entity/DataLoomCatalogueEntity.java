@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.bson.BsonType;
+import org.bson.codecs.pojo.annotations.BsonRepresentation;
 import org.example.dataloom.messaging.dto.FruitType;
 import org.example.dataloom.messaging.dto.QualityGrade;
 import org.springframework.data.annotation.Id;
@@ -24,9 +26,9 @@ public class DataLoomCatalogueEntity {
     // Fields from FruitHarvestEventPayloadDto
 //    private String eventId;
     private List<String> batchId;
-    private String farmLocation;
+    private List<String> farmLocation;
     private FruitType fruitType;
-    private String harvestDate;
+    private List<String> harvestDate;
 //    private int quantityKg;   // that field will be aded to availableKg
 
     // Fields from InventoryUpdateEventPayloadDto
@@ -35,6 +37,7 @@ public class DataLoomCatalogueEntity {
     private String status;
 
     // Fields from QualityCheckEventPayloadDto
+    @BsonRepresentation(BsonType.STRING)
     private QualityGrade quality;
     private String inspectorId;
     private String inspectionDate;

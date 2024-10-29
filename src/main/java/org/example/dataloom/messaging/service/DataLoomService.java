@@ -10,6 +10,7 @@ import org.example.dataloom.repository.DataLoomRepository;
 import org.example.dataloom.repository.entity.DataLoomCatalogueEntity;
 import org.example.dataloom.repository.entity.FruitHarvestEventEntity;
 import org.example.dataloom.repository.entity.QualityControlEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,6 +30,49 @@ public class DataLoomService {
     // quality checks are pinned to a batchId
     // inventory updates are pinned to a location
     // every document in collection contains information tied to FruitType and QualityGrade, other information are added to the document.
+
+    @Scheduled(fixedDelayString = "${schedule.dataloom.catalogue.update.interval}")
+    private void runDataLoomCatalogueUpdate() {
+        log.info("Started DataLoomCatalogue update process.");
+        List<FruitHarvestEventEntity> fruitHarvestEvents = archivedFruitHarvestEventsRepository.findAll();
+        List<QualityControlEntity> qualityControlEvents = archivedQualityControlEventsRepository.findAll();
+        for (FruitHarvestEventEntity fruitHarvestEvent : fruitHarvestEvents) {
+            String batchId = fruitHarvestEvent.getBatchId();
+                        // check if quality check exists for this batchId
+            Optional<QualityControlEntity> qualityControlEntity = qualityControlEvents.stream()
+                            .filter(qualityControl -> qualityControl.getBatchId().equals(batchId))
+                            .findFirst();
+            QualityGrade qualityGrade = qualityControlEvents.get(0).getQuality();
+            FruitType fruitType = fruitHarvestEvent.getFruitType();
+
+            qualityControlEntity.ifPresent(controlEntity -> saveFruitHarvestEventToFruitLoom(fruitHarvestEvent, controlEntity));
+        }
+        log.info("Finished DataLoomCatalogue update process.");
+    }
+
+    // FIXME: Check why data is not being saved to DataLoomCatalogue in doubles (batchId, farmLocation, harvestDate).
+    private void saveFruitHarvestEventToFruitLoom(FruitHarvestEventEntity fruitHarvestEvent, QualityControlEntity qualityControlEntity) {
+        // check if FruitType and QualityGrade exists in DataLoomCatalogue
+        Optional<DataLoomCatalogueEntity> dataLoomCatalogueEntity =
+                dataLoomRepository.findDataLoomCatalogueEntityByFruitTypeAndQualityGrade(fruitHarvestEvent.getFruitType(),
+                        qualityControlEntity.getQuality());
+        // if so update the document with the new information
+        if (dataLoomCatalogueEntity.isPresent()) {
+            updateFruitHarvestEventToDataLoomCollection(fruitHarvestEvent, qualityControlEntity, dataLoomCatalogueEntity.get());
+        } else {
+            // or create a new document
+            var newDataLoomCatalogueEntity = createNewDocument(fruitHarvestEvent, qualityControlEntity);
+            dataLoomRepository.save(newDataLoomCatalogueEntity);
+        }
+        // delete the archived documents
+        archivedFruitHarvestEventsRepository.delete(fruitHarvestEvent);
+        archivedQualityControlEventsRepository.delete(qualityControlEntity);
+    }
+
+
+
+
+
 
     public void saveFruitHarvestEvent(FruitHarvestEventEntity fruitHarvestEvent) {
         // check if quality check exists for this fruitHarvestEvent.batchId
@@ -60,9 +104,9 @@ public class DataLoomService {
         log.info("Creating new document in DataLoomCatalogue for: {}, {}", fruitHarvestEvent.getFruitType(), qualityControlEntity.getQuality());
         return DataLoomCatalogueEntity.builder()
                 .batchId(List.of(fruitHarvestEvent.getBatchId()))
-                .farmLocation(fruitHarvestEvent.getFarmLocation())
+                .farmLocation(List.of(fruitHarvestEvent.getFarmLocation()))
                 .fruitType(fruitHarvestEvent.getFruitType())
-                .harvestDate(fruitHarvestEvent.getHarvestDate())
+                .harvestDate(List.of(fruitHarvestEvent.getHarvestDate()))
                 .location(List.of())
                 .availableKg(fruitHarvestEvent.getQuantityKg())
                 .status("unknown")
@@ -77,9 +121,12 @@ public class DataLoomService {
                                                              QualityControlEntity qualityControlEntity,
                                                              DataLoomCatalogueEntity dataLoomCatalogueEntity) {
         // update the existing document with the new information
-        log.info("Saving FruitHarvestEvent to DataLoomCatalogue: {}", fruitHarvestEvent);
-
-
+        log.info("Updating {}, {} in DataLoomCatalogue.", fruitHarvestEvent.getFruitType(), qualityControlEntity.getQuality());
+        dataLoomCatalogueEntity.getBatchId().add(fruitHarvestEvent.getBatchId());
+        dataLoomCatalogueEntity.getFarmLocation().add(fruitHarvestEvent.getFarmLocation());
+        dataLoomCatalogueEntity.getHarvestDate().add(fruitHarvestEvent.getHarvestDate());
+        dataLoomCatalogueEntity.setAvailableKg(dataLoomCatalogueEntity.getAvailableKg() + fruitHarvestEvent.getQuantityKg());
+        dataLoomRepository.save(dataLoomCatalogueEntity);
     }
 
 
