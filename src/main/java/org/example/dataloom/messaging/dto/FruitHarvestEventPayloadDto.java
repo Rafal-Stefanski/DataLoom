@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @JsonTypeName("payload")
 public class FruitHarvestEventPayloadDto {
-    private String eventId; // extracted from metaData in Kafka message
+//    private String eventId; // extracted from metaData in Kafka message
     private String batchId;
     private String farmLocation;
     private FruitType fruitType;

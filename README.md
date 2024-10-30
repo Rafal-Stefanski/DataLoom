@@ -1,11 +1,13 @@
 ## DATA LOOM - Fruit Company Application
-### Function: Data gathering, and updating.
+### Function: Data gathering, updating, and combining into a single collection in MongoDB.
 
 ### Description: 
-Application work on Spring boot 3.3.4 and Java 17. Using Kafka consumer, reads following events:
-- fruit harvesting event
-- inventory update event
-- quality check event
+Application main function is to gather data from different sources, and update a single document in DataLoomCatalogue collection in MongoDB.
+Main goal is mimic gathering data from fruit harvesting, where each batch of fruits is described with type of fruit origin, quantity, quality, and place of storage. Using Kafka consumer, app reads events which are stored in MongoDB collections to be reprocessed and combined into a single document in DataLoomCatalogue collection, when all needed information for each fruit are present. 
+Each document contains information about fruit harvest events, inventory updates, and quality checks all bound to a fruit type and fruit grade, with exact amount of fruits in storage. 
+
+### Technologies:
+Application works on Spring boot 3.3.4 and Java 17, MongoDB 4.0.28, Kafka 3.2.0. For local development and testing, local environment is created using Docker containers, all needed components are started and prepared in bash scripts. Including database creation and configuration, and starting Kafka UI for ease of testing messages. 
 
 ### How to run: 
 Application run on Docker containers. To run the application in detached mode:
@@ -20,4 +22,10 @@ Application run on Docker containers. To run the application in detached mode:
 
 ### Logic:
 - Application reads events from Kafka topics, and updates MongoDB collections.
+- DataLoomCatalogue stores information about fruit harvest events, inventory updates, and quality checks all bound to a batchId.
+- Following events are read from Kafka topics:
+  - FruitHarvestEvent
+  - InventoryUpdateEvent
+  - QualityCheckEvent
+- when all three are present for specific batchId, the information is combined into a single document in DataLoomCatalogue or updated if the document already exists.
 

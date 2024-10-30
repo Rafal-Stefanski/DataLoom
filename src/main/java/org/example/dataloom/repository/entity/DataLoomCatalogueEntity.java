@@ -12,6 +12,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Builder
@@ -32,7 +33,7 @@ public class DataLoomCatalogueEntity {
 //    private int quantityKg;   // that field will be aded to availableKg
 
     // Fields from InventoryUpdateEventPayloadDto
-    private List<String> location;
+    private Map<String, String> location;
     private int availableKg;
     private String status;
 

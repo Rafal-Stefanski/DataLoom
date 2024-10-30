@@ -1,6 +1,5 @@
 package org.example.dataloom.messaging.dto;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
@@ -20,11 +19,11 @@ public enum QualityGrade {
         this.grade = grade;
     }
 
-//    @JsonValue
-//    public String getValue() {
-//        return grade;
-//    }
-//
+    @JsonValue
+    public String getValue() {
+        return grade;
+    }
+
 //    @JsonCreator
 //    public static QualityGrade fromValue(String value) {
 //        for (QualityGrade grade : QualityGrade.values()) {

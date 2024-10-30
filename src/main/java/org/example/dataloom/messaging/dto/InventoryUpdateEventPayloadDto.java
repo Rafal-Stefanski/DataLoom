@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @JsonTypeName("payload")
 public class InventoryUpdateEventPayloadDto {
-    private String eventId; // extracted from metaData in Kafka message
     private FruitType fruitType;
     private String batchId;
     private String location;
