@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @JsonTypeName("payload")
 public class QualityCheckEventPayloadDto {
-//    private String eventId; // extracted from metaData in Kafka message
     private String batchId;
     private FruitType fruitType;
     private QualityGrade quality;
