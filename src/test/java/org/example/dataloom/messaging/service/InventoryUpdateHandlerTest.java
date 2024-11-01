@@ -1,6 +1,6 @@
 package org.example.dataloom.messaging.service;
 
-import org.example.dataloom.messaging.dto.FruitHarvestEventPayloadDto;
+import org.example.dataloom.messaging.dto.InventoryUpdateEventPayloadDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -10,23 +10,24 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class FruitHarvestHandlerTest {
+class InventoryUpdateHandlerTest {
 
     @Mock
-    private FruitHarvestService fruitHarvestservice;
+    private InventoryUpdateService inventoryUpdateService;
 
     @InjectMocks
-    private FruitHarvestHandler underTest;
+    private InventoryUpdateHandler underTest;
 
     @Test
     void shouldHandle() {
         // given
-        FruitHarvestEventPayloadDto message = new FruitHarvestEventPayloadDto();
+        InventoryUpdateEventPayloadDto message = new InventoryUpdateEventPayloadDto();
 
         // when
         underTest.handle(message);
 
         // then
-        verify(fruitHarvestservice).save(message);
+        verify(inventoryUpdateService).save(message);
     }
+
 }
