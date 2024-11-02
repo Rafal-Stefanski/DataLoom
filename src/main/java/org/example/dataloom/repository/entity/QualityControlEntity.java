@@ -18,6 +18,7 @@ import org.springframework.data.mongodb.core.mapping.MongoId;
 @AllArgsConstructor
 @Document(collection = "archived_quality_check_events")
 public class QualityControlEntity {
+
     @MongoId
     private ObjectId id;
     private String eventId;

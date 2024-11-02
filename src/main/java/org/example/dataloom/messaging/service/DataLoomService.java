@@ -2,8 +2,6 @@ package org.example.dataloom.messaging.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.dataloom.messaging.dto.FruitType;
-import org.example.dataloom.messaging.dto.QualityGrade;
 import org.example.dataloom.repository.ArchivedFruitHarvestEventsRepository;
 import org.example.dataloom.repository.ArchivedInventoryUpdateEventsRepository;
 import org.example.dataloom.repository.ArchivedQualityControlEventsRepository;
@@ -30,7 +28,7 @@ public class DataLoomService {
     private final ArchivedInventoryUpdateEventsRepository archivedInventoryUpdateEventsRepository;
 
     @Scheduled(fixedDelayString = "${schedule.dataloom.catalogue.update.interval}")
-    private void runDataLoomCatalogueUpdate() {
+    public void runDataLoomCatalogueUpdate() {
         log.info("Started DataLoomCatalogue update process.");
         List<FruitHarvestEventEntity> fruitHarvestEvents = archivedFruitHarvestEventsRepository.findAll();
         List<QualityControlEntity> qualityControlEvents = archivedQualityControlEventsRepository.findAll();
@@ -122,43 +120,10 @@ public class DataLoomService {
         dataLoomCatalogueEntity.setInspectionDate(qualityControlEntity.getInspectionDate());
         dataLoomCatalogueEntity.setRemarks(qualityControlEntity.getRemarks());
 
-        dataLoomRepository.save(dataLoomCatalogueEntity);
+        saveDataLoomCatalogueEntity(dataLoomCatalogueEntity);
     }
 
-
-    public void saveFruitHarvestEvent(FruitHarvestEventEntity fruitHarvestEvent) {
-        // check if quality check exists for this fruitHarvestEvent.batchId
-        log.info("Started process of adding FruitHarvestEvent to DataLoomCatalogue: {}", fruitHarvestEvent);
-        Optional<QualityControlEntity> qualityControlEntity =
-                archivedQualityControlEventsRepository.findFirstByBatchId(fruitHarvestEvent.getBatchId());
-        if (qualityControlEntity.isPresent()) {
-
-            log.info("Quality check exists for batchId: {}", fruitHarvestEvent.getBatchId());
-            // check if FruitType and QualityGrade exists in DataLoomCatalogue
-            Optional<DataLoomCatalogueEntity> dataLoomCatalogueEntity =
-                    dataLoomRepository.findDataLoomCatalogueEntityByFruitTypeAndQualityGrade(fruitHarvestEvent.getFruitType(),
-                            qualityControlEntity.get().getQuality());
-            // if so update the document with the new information
-            if (dataLoomCatalogueEntity.isPresent()) {
-//                updateFruitHarvestEventToDataLoomCollection(fruitHarvestEvent, qualityControlEntity.get(), dataLoomCatalogueEntity.get());
-            } else {
-//                var newDataLoomCatalogueEntity = createNewDocument(fruitHarvestEvent, qualityControlEntity.get());
-//                dataLoomRepository.save(newDataLoomCatalogueEntity);
-            }
-        } else {
-            log.warn("Quality check does not exist for batchId: {}, batch saved to archived collection", fruitHarvestEvent.getBatchId());
-            archivedFruitHarvestEventsRepository.save(fruitHarvestEvent);
-        }
-    }
-
-
-    public boolean isDataLoomCatalogueEntityExists(FruitType fruitType, QualityGrade qualityGrade) {
-        return dataLoomRepository.findAll().stream()
-                .anyMatch(dataLoomCatalogueEntity -> dataLoomCatalogueEntity.getFruitType().equals(fruitType) &&
-                        dataLoomCatalogueEntity.getQuality().equals(qualityGrade));
-    }
-
-    public void saveDataLoomCatalogueEntity(DataLoomCatalogueEntity dataLoomCatalogueEntity) {
+    private void saveDataLoomCatalogueEntity(DataLoomCatalogueEntity dataLoomCatalogueEntity) {
         log.info("Saving DataLoomCatalogueEntity: {}", dataLoomCatalogueEntity);
         dataLoomRepository.save(dataLoomCatalogueEntity);
     }

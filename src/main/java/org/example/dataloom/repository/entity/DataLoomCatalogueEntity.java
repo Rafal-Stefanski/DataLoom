@@ -25,7 +25,6 @@ public class DataLoomCatalogueEntity {
     private String id;
 
     // Fields from FruitHarvestEventPayloadDto
-//    private String eventId;
     private List<String> batchId;
     private List<String> farmLocation;
     private FruitType fruitType;

@@ -24,18 +24,4 @@ public enum QualityGrade {
         return grade;
     }
 
-//    @JsonCreator
-//    public static QualityGrade fromValue(String value) {
-//        for (QualityGrade grade : QualityGrade.values()) {
-//            if (grade.grade.equals(value)) {
-//                return grade;
-//            }
-//        }
-//        throw new IllegalArgumentException("Unknown enum value: " + value);
-//    }
-
-//    @Override
-//    public String toString() {
-//        return this.grade;
-//    }
 }

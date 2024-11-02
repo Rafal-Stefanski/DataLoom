@@ -15,6 +15,7 @@ import org.springframework.data.mongodb.core.mapping.MongoId;
 @AllArgsConstructor
 @Document(collection = "archived_fruit_harvest_events")
 public class FruitHarvestEventEntity {
+
     @MongoId
     private ObjectId id;
     private String eventId;
