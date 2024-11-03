@@ -1,5 +1,6 @@
 ## DATA LOOM - Fruit Company Application
 ### Function: Data gathering, updating, and combining into a single collection in MongoDB.
+<img align="right" src="https://badges.pufler.dev/visits/Rafal-Stefanski/DataLoom">
 
 ### Description: 
 Application main function is to gather data from different sources, and update a single document in DataLoomCatalogue collection in MongoDB.
