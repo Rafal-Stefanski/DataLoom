@@ -29,3 +29,18 @@ Application run on Docker containers. To run the application in detached mode:
   - QualityCheckEvent
 - when all three are present for specific batchId, the information is combined into a single document in DataLoomCatalogue or updated if the document already exists.
 
+### Usage (local environment): 
+- Sending events: 
+  - Events can be sent to Kafka topics using Kafka AKHQ UI ```http://localhost:8090/ui/docker-kafka-server/```
+  - All collections can be viewed in MongoDB client ```mongodb://localhost:27017```
+  - To check currently available fruits in storage, use ```http://localhost:8080/fruits```
+  
+    This will return all list of  fruits it's grade and available quantity in kg.
+  
+    Example: 
+  ```
+  "Available: Fruit Type: Apple, Quality Grade: A_PLUS, Quantity: 550",
+  "Available: Fruit Type: Pear, Quality Grade: B, Quantity: 230"
+  ```
+
+
