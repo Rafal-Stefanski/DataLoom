@@ -38,4 +38,4 @@ build/
 /local-env-dataloom/scripts/createCollections.sh
 /local-env-dataloom/scripts/createDBUser.sh
 /local-env-dataloom/scripts/rs-init.sh
-/start_local_environment.sh
+
